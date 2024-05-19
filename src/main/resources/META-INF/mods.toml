@@ -1,0 +1,24 @@
+modLoader="javafml" #mandatory
+loaderVersion="[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license="GNU LGPL v3"
+
+[[mods]]
+modId="exponentialevolution"
+version="${file.jarVersion}"
+displayName="Exponential Evolution"
+authors="yukku"
+description='''
+This is an add-on that wirelessly transports Exponential Power power to the Energy Core.
+'''
+[[dependencies.exponentialevolution]]
+    modId="forge"
+    mandatory=true
+    versionRange="[40,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.exponentialevolution]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.18.2,1.19)"
+    ordering="NONE"
+    side="BOTH"

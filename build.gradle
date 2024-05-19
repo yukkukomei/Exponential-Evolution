@@ -1,0 +1,168 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+        maven { url = 'https://repo.spongepowered.org/maven' }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: "org.spongepowered.mixin"
+
+version = '1.0.0'
+group = 'com.yukku.exponentialevolution'
+archivesBaseName = 'exponentialevolution'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft {
+    mappings channel: 'official', version: '1.18.2'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'exponentialevolution'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                exponentialevolution {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'exponentialevolution'
+
+            mods {
+                exponentialevolution {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        gameTestServer {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'exponentialevolution'
+
+            mods {
+                exponentialevolution {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'exponentialevolution', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                exponentialevolution {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "mixins.exponentialevolution.refmap.json"
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven { url = "https://dvs1.progwml6.com/files/maven/" }
+    maven { url = "https://maven.blamejared.com/" }
+    maven { url = "https://modmaven.dev" }
+    maven { url = "https://maven.covers1624.net/" }
+    maven { url = "https://maven.cil.li/" }
+    maven { url = "https://maven.theillusivec4.top/" }
+    maven { url = "https://squiddev.cc/maven/" }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+dependencies {
+    //minecraft
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // mixin
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    //draconic_evolution
+    implementation fg.deobf("com.brandon3055.brandonscore:BrandonsCore:${minecraft_version}-${bcore_version}:universal")
+    implementation fg.deobf("codechicken:CodeChickenLib:${minecraft_version}-${codechickenlib_version}:universal")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
+    implementation fg.deobf("com.brandon3055.draconicevolution:Draconic-Evolution:${minecraft_version}-${de_version}:universal")
+
+    //exponential_power
+    implementation fg.deobf("curse.maven:exponential-power-254249:${exponential_power_id}")
+
+    //jei
+    runtimeOnly (fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+
+    //jade
+    runtimeOnly fg.deobf("curse.maven:jade-324717:${jade_id}")
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "exponentialevolution",
+                "Specification-Vendor"    : "exponentialevolutionsareus",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "exponentialevolutionsareus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

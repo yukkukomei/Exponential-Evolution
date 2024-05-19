@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.yukku.exponentialevolution.mixin",
+  "refmap": "mixins.exponentialevolution.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EnderGeneratorMixin"
+  ],
+  "client": [
+  ]
+}
